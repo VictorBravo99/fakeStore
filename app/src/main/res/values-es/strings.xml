@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fake Store</string>
+    <string name="welcome_back">Bienvenido</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="forgot_password">¿Has olvidado tu contraseña?</string>
+    <string name="sign_in">Iniciar sesión</string>
+    <string name="or_sign_in_with">O iniciar sesión con</string>
+    <string name="authenticate_with_facebook">Autenticarse con Facebook</string>
+    <string name="authenticate_with_google">Autenticarse con Google</string>
+    <string name="don_t_have_an_account">"¿No tienes una cuenta? "</string>
+    <string name="sign_up">Crear cuenta</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="name">Nombre</string>
+    <string name="username">Apellido</string>
+    <string name="phone_number">Número de teléfono</string>
+    <string name="the_email_cannot_be_empty">El email no puede estar vacío.</string>
+    <string name="Invalid_email_format">Formato de email inválido.</string>
+    <string name="the_password_cannot_be_empty">la contraseña no puede estar vacía.</string>
+    <string name="the_password_must_have_at_least_6_characters">La contraseña debe tener más de 6 caracteres.</string>
+</resources>
