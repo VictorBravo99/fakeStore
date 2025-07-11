@@ -4,7 +4,6 @@ import com.example.fakestore.data.network.client.ApiServiceImpl
 import com.example.fakestore.data.network.model.Auth
 import com.example.fakestore.domain.repository.RepositoryAuth
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.serializer
 import javax.inject.Inject
 
@@ -24,6 +23,4 @@ class RepositoryAuthImpl @Inject constructor(
                 serializer = Json.serializersModule.serializer()
             )
         )
-
-
 }

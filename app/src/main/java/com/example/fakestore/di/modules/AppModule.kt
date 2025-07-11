@@ -2,6 +2,7 @@ package com.example.fakestore.di.modules
 
 import com.example.fakestore.domain.useCase.UseCase
 import com.example.fakestore.domain.useCase.module.AuthUseCase
+import com.example.fakestore.domain.useCase.module.HomeUseCase
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -13,8 +14,8 @@ object AppModule {
 
 
     @Provides
-    fun provideUseCase(authUseCase: AuthUseCase): UseCase { // Dagger will provide AuthUseCase
-        return UseCase(auth = authUseCase)
+    fun provideUseCase(authUseCase: AuthUseCase, homeUseCase: HomeUseCase): UseCase {
+        return UseCase(auth = authUseCase, home = homeUseCase)
     }
 
 }

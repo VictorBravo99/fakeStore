@@ -46,7 +46,6 @@ import com.example.fakestore.presentation.navigation.Screen
 import com.example.fakestore.presentation.ui.screenLogin.components.LinkSocial
 import com.example.fakestore.presentation.ui.screenLogin.components.ModalLogin
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenLogin(
     modifier: Modifier,
