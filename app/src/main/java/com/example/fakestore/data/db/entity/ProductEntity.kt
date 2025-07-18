@@ -1,19 +1,21 @@
-package com.example.fakestore.data.network.model
+package com.example.fakestore.data.db.entity
 
-
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Entity(tableName = "products")
 @Serializable
-data class Product(
+data class ProductEntity(
+    @SerialName("id")
+    @PrimaryKey val id: Int,
     @SerialName("category")
     val category: Category,
     @SerialName("creationAt")
     val creationAt: String,
     @SerialName("description")
     val description: String,
-    @SerialName("id")
-    val id: Int,
     @SerialName("images")
     val images: List<String>,
     @SerialName("price")

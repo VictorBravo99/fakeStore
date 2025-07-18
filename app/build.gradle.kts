@@ -84,13 +84,16 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
+    //navegaction
+    implementation(libs.animation)
+
     //icons
     implementation(libs.icons)
 
     //Timber
     implementation(libs.timber)
 
-    // Lottie
+    //Lottie
     implementation (libs.lottie.compose)
 
     //font
