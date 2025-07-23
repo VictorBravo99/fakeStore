@@ -54,7 +54,6 @@ class ViewModelLogin @Inject constructor(
                      setInstancesPref(context, it.accessToken)
                      result(true)
                 }.onFailure {
-                    Timber.d(it.message)
                      result(false)
                 }
             }

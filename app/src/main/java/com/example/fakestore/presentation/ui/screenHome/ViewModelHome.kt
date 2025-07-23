@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakestore.data.network.model.Category
 import com.example.fakestore.data.db.entity.ProductEntity
+import com.example.fakestore.data.network.model.User
 import com.example.fakestore.domain.useCase.UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,13 +21,26 @@ class ViewModelHome @Inject constructor(
         private set
     var category by mutableStateOf<Result<List<Category>>?>(null)
         private set
+    var user by mutableStateOf<Result<User>?>(null)
+        private set
 
     var loading by mutableStateOf(false)
+
+    init {
+        startHome()
+    }
 
     fun startHome(){
         loading = true
         getProducts()
         getCategory()
+        getUser()
+    }
+
+    private fun getUser() {
+        viewModelScope.launch {
+            user = useCase.home.getUser()
+        }
     }
 
     fun loadingStatus(){

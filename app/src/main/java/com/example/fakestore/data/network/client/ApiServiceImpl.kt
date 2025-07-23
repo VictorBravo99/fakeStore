@@ -4,6 +4,7 @@ import com.example.fakestore.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -23,11 +24,19 @@ class ApiServiceImpl @Inject constructor(
 
     suspend inline fun <reified T> get(
         url: String,
-        host: String? = BuildConfig.HOST_BASE
+        host: String? = BuildConfig.HOST_BASE,
+        header: Map<String, String>? = null
     ): Result<T> {
         return try {
             Result.success(httpClient.get(urlString = host + url) {
                 contentType(ContentType.Application.Any)
+                header?.let {
+                    headers{
+                        it.map { x ->
+                            append(x.key, x.value)
+                        }
+                    }
+                }
 
             }.body())
         } catch (e: Exception) {

@@ -8,4 +8,6 @@ class HomeUseCase@Inject constructor(
 ) {
     suspend fun getProduct() = repositoryHome.getProduct()
     suspend fun getCategory() = repositoryHome.getCategory()
+
+    suspend fun getUser() = repositoryHome.getUser()
 }

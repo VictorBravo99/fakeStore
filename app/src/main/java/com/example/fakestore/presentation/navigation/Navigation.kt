@@ -2,6 +2,7 @@ package com.example.fakestore.presentation.navigation
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -55,7 +56,10 @@ fun Navigation(modifier: Modifier = Modifier) {
                             sharedContentState = rememberSharedContentState(
                                 HOME_TO_NAV_DETAILS_PRODUCT + productId.toString()
                             ),
-                            animatedVisibilityScope = this
+                            animatedVisibilityScope = this,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 500)
+                            }
                         ),
                     id = productId ?: 0,
                     navController = navController
