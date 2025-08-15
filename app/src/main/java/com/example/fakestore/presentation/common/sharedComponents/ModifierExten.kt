@@ -1,4 +1,4 @@
-package com.example.fakestore.presentation.common.shared
+package com.example.fakestore.presentation.common.sharedComponents
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -19,7 +19,6 @@ fun Modifier.validateOffFocus(
         if (!focusState.isFocused && emailHasLostFocus) onValidate()
 
         if (!focusState.isFocused) emailHasLostFocus = true
-
     }
 
 }

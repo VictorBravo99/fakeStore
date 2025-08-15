@@ -28,17 +28,26 @@ class ApiServiceImpl @Inject constructor(
         header: Map<String, String>? = null
     ): Result<T> {
         return try {
-            Result.success(httpClient.get(urlString = host + url) {
+            val response = httpClient.get(urlString = host + url) {
                 contentType(ContentType.Application.Any)
                 header?.let {
-                    headers{
+                    headers {
                         it.map { x ->
                             append(x.key, x.value)
                         }
                     }
                 }
+            }
 
-            }.body())
+            if (response.status.value !in 200..299) {
+                val errorDetails = response.body<JsonElement>()
+                val errorMsg = errorDetails.jsonObject["message"]?.jsonPrimitive?.content.toString()
+                val statusCodeFromBody =
+                    errorDetails.jsonObject["statusCode"]?.jsonPrimitive?.intOrNull
+                throw Exception(errorMsg)
+            }
+
+            Result.success(response.body<T>())
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure(e)

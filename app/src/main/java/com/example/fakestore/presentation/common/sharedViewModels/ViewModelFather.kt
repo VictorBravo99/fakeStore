@@ -1,4 +1,4 @@
-package com.example.fakestore.presentation.common.shared
+package com.example.fakestore.presentation.common.sharedViewModels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -1,4 +1,4 @@
-package com.example.fakestore.presentation.common.shared
+package com.example.fakestore.presentation.common.sharedComponents
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

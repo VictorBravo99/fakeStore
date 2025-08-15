@@ -40,7 +40,6 @@ fun Navigation(modifier: Modifier = Modifier) {
             }
             composable(Screen.HomeScreen.route) {
                 ScreenHome(modifier = modifier, navController = navController, animationVisibilityScope = this)
-
             }
 
             composable(
@@ -48,7 +47,6 @@ fun Navigation(modifier: Modifier = Modifier) {
                 arguments = listOf(navArgument("productId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val productId = backStackEntry.arguments?.getInt("productId")
-                Timber.d("productId: $productId")
                 ScreenDetailsProduct(
                     modifier = modifier
                         .fillMaxSize()

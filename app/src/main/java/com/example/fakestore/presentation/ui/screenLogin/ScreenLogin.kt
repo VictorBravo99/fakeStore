@@ -40,8 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fakestore.R
-import com.example.fakestore.presentation.common.shared.ValidateError
-import com.example.fakestore.presentation.common.shared.validateOffFocus
+import com.example.fakestore.presentation.common.sharedComponents.ValidateError
+import com.example.fakestore.presentation.common.sharedComponents.validateOffFocus
 import com.example.fakestore.presentation.navigation.Screen
 import com.example.fakestore.presentation.ui.screenLogin.components.LinkSocial
 import com.example.fakestore.presentation.ui.screenLogin.components.ModalLogin

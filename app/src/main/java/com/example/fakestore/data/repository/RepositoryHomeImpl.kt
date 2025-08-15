@@ -11,6 +11,7 @@ import com.example.fakestore.domain.repository.RepositoryHome
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonElement
 import javax.inject.Inject
 
 class RepositoryHomeImpl @Inject constructor(
@@ -42,6 +43,5 @@ class RepositoryHomeImpl @Inject constructor(
         url = "/api/v1/auth/profile",
         header = mapOf("Authorization" to "Bearer " + instanceValueFlow(context).value.orEmpty())
     )
-
 
 }

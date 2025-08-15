@@ -6,7 +6,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,27 +48,35 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.LottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.model.KeyPath
 import com.example.fakestore.R
-import com.example.fakestore.presentation.navigation.HOME_TO_NAV_DETAILS_PRODUCT
-import com.example.fakestore.presentation.navigation.Screen
+import com.example.fakestore.presentation.common.sharedComponents.card.CardCategory
+import com.example.fakestore.presentation.common.sharedComponents.card.CardProduct
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -84,10 +92,16 @@ fun SharedTransitionScope.ScreenHome(
     val loading = viewModelHome.loading
     val user = viewModelHome.user
 
+
     LaunchedEffect(category, product) {
         viewModelHome.loadingStatus()
     }
+    val isRefreshing by remember { mutableStateOf(false) }
 
+    PullToRefreshCustomStyleSample(
+        isRefreshing = isRefreshing, // Usar el estado de refresh del ViewModel
+        onRefresh = { }
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -112,6 +126,7 @@ fun SharedTransitionScope.ScreenHome(
 
                     )
                 }?.onFailure {
+                    Timber.e("Error al cargar la imagen ${it.message}")
                     Icon(
                         modifier = Modifier.size(35.dp),
                         imageVector = Icons.Default.AccountCircle,
@@ -178,104 +193,51 @@ fun SharedTransitionScope.ScreenHome(
                 }
             }
 
-                product?.onSuccess {
-                    LazyRow {
-                        items(it.size) { index ->
-                            if (index == 0) Spacer(modifier = Modifier.width(16.dp))
-                            Column(
-                                modifier = Modifier
-                                    .width(240.dp)
-                                    .sharedElement(
-                                        sharedContentState = rememberSharedContentState(
-                                            HOME_TO_NAV_DETAILS_PRODUCT + it[index].id.toString()
-                                        ),
-                                        animatedVisibilityScope = animationVisibilityScope,
-                                        boundsTransform = { _, _ ->
-                                            tween(durationMillis = 500)
-                                        }
+            product?.onSuccess {
+                LazyRow {
+                    items(it.size) { index ->
+                        if (index == 0) Spacer(modifier = Modifier.width(16.dp))
+                        CardProduct(
+                            product = it[index],
+                            navController = navController,
+                            animationVisibilityScope = animationVisibilityScope
+                        )
+                        if (index == 9) Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
+            }
 
-                                    )
-                                    .clickable {
-                                        navController.navigate(
-                                            Screen.DetailsProductScreen.createRoute(
-                                                it[index].id
-                                            )
-                                        )
+            Text(
+                "Categories",
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 16.dp, bottom = 8.dp),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
+            category?.onSuccess {
 
-                                    }
-                            ) {
-                                AsyncImage(
-                                    model = it[index].images[0],
-                                    contentScale = ContentScale.Crop,
-                                    contentDescription = it[index].description,
-                                    modifier = Modifier
-                                        .height(130.dp)
-                                        .width(240.dp)
-                                        .padding(end = 8.dp)
-                                        .clip(RoundedCornerShape(12.dp))
+                Column(modifier = Modifier.fillMaxWidth(0.9f)) {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
 
-                                )
-                                Text(
-                                    text = it[index].title,
-                                    modifier = Modifier.padding(horizontal = 4.dp),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
-                                )
-                            }
-                            if (index == 9) Spacer(modifier = Modifier.width(8.dp))
+                    ) {
+
+                        for (categoryItem in it) {
+                            CardCategory(categoryItem = categoryItem)
                         }
+
                     }
                 }
 
-                Text(
-                    "Categories",
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .padding(top = 16.dp, bottom = 8.dp),
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                category?.onSuccess {
-
-                    Column(modifier = Modifier.fillMaxWidth(0.9f)) {
-                        FlowRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-
-                        ) {
-
-                            for (categoryItem in it) {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(0.48f)
-                                ) {
-                                    AsyncImage(
-                                        model = categoryItem.image,
-                                        error = painterResource(R.drawable.file_error),
-                                        contentScale = ContentScale.Crop,
-                                        contentDescription = "Product Image",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(130.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                    )
-                                    Text(
-                                        text = categoryItem.name,
-                                        modifier = Modifier.padding(top = 4.dp)
-                                    )
-                                }
-
-                            }
-
-                        }
-                    }
-
-                }
+            }
 
         }
-
-    if (loading){
+    }
+    if (loading) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -285,9 +247,15 @@ fun SharedTransitionScope.ScreenHome(
             Spacer(modifier = Modifier.weight(1f))
             Text("Loading", style = MaterialTheme.typography.displayLarge)
 
-            AnimatedPreload(animationResource = R.raw.ecommerce, modifier = Modifier.fillMaxHeight(0.3f))
+            AnimatedPreload(
+                animationResource = R.raw.ecommerce,
+                modifier = Modifier.fillMaxHeight(0.3f)
+            )
 
-            AnimatedPreload(animationResource = R.raw.loading, modifier = Modifier.fillMaxHeight(0.1f))
+            AnimatedPreload(
+                animationResource = R.raw.loading,
+                modifier = Modifier.fillMaxHeight(0.1f)
+            )
             Spacer(modifier = Modifier.weight(1f))
 
         }
@@ -295,7 +263,13 @@ fun SharedTransitionScope.ScreenHome(
 }
 
 @Composable
-fun AnimatedPreload(modifier: Modifier = Modifier, animationResource: Int, isPlaying : Boolean = true) {
+fun AnimatedPreload(
+    modifier: Modifier = Modifier,
+    animationResource: Int,
+    contentScale: ContentScale = ContentScale.Fit,
+    isPlaying: Boolean = true,
+    dynamicProperties: LottieDynamicProperties? = null
+) {
     val preloadLottieComposition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(
             animationResource
@@ -303,12 +277,14 @@ fun AnimatedPreload(modifier: Modifier = Modifier, animationResource: Int, isPla
     )
 
     LottieAnimation(
+        dynamicProperties = dynamicProperties,
+        contentScale = contentScale,
         composition = preloadLottieComposition,
         modifier = modifier,
         isPlaying = isPlaying,
         iterations = LottieConstants.IterateForever,
 
-    )
+        )
 }
 
 
@@ -323,19 +299,25 @@ fun PullToRefreshCustomStyleSample(
     val state = rememberPullToRefreshState()
 
     PullToRefreshBox(
+        modifier = modifier.fillMaxWidth(),
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
         state = state,
         indicator = {
-            Indicator2(
-                modifier = Modifier.offset(
-                    y = (100).dp
-                ),
-                isRefreshing = isRefreshing,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                state = state
-            )
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
+                Indicator2(
+                    modifier = Modifier.offset(
+                        y = (220).dp
+                    ),
+                    isRefreshing = isRefreshing,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    state = state
+                )
+                Spacer(modifier = Modifier.weight(1f))
+            }
+
         },
     ) {
         content()
@@ -352,6 +334,24 @@ fun Indicator2(
     color: Color = PullToRefreshDefaults.indicatorColor,
     threshold: Dp = PositionalThreshold,
 ) {
+    var animatedColor by remember { mutableStateOf(Color.Red) }
+    // Definimos el color que queremos para la animación de Lottie
+    // Puedes hacerlo un estado mutable si quieres cambiarlo en tiempo real
+    val lottieOverlayColor = MaterialTheme.colorScheme.primary // O cualquier Color.Red, etc.
+
+//    val lottieColorProperties = remember(lottieOverlayColor) {
+//        LottieDynamicProperties.Builder()
+//            .add(
+//                // KeyPath para cambiar todos los rellenos de color en la animación
+//                KeyPath("**"),
+//                // La propiedad que queremos cambiar (COLOR para rellenos)
+//                LottieProperty.COLOR,
+//                // El nuevo color, convertido a ARGB
+//                LottieValueCallback(lottieOverlayColor.toArgb())
+//            )
+//            .build()
+//    }
+
     Box(
         modifier =
             modifier.pullToRefreshIndicator(
@@ -367,9 +367,15 @@ fun Indicator2(
             animationSpec = tween(durationMillis = 100)
         ) { refreshing ->
             if (refreshing) {
-                AnimatedPreload(animationResource = R.raw.loading, modifier = Modifier.fillMaxHeight(1f))
+                AnimatedPreload(
+                    animationResource = R.raw.loading_new,
+                    modifier = Modifier.fillMaxSize()
+                )
             } else {
-                AnimatedPreload(animationResource = R.raw.loading, modifier = Modifier.fillMaxHeight(1f))
+                AnimatedPreload(
+                    animationResource = R.raw.loading_new,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }
